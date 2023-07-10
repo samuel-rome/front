@@ -12,6 +12,10 @@ export const Config = () => {
     const updateUser = async(e) => {
         e.preventDefault();
 
+        // Token de autenticacion
+
+        const token = localStorage.getItem("token")
+
         // Recoger datos del formulario
         let newDataUser = SerializeForm(e.target);
 
@@ -24,12 +28,12 @@ export const Config = () => {
             body: JSON.stringify(newDataUser),
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": localStorage.getItem("token")
+                "Authorization": token
             }
         })
         const data = await request.json();
 
-        if(data.status == "success"){
+        if(data.status == "success" && data.user){
             delete data.user.password;
             setAuth(data.user);
             setSaved("saved");
@@ -38,6 +42,39 @@ export const Config = () => {
         }else{
             setSaved("error");
         }
+
+        // Subida de imagenes
+
+        const fileInput = document.querySelector("#file");
+
+        if(data.status == "success" && fileInput.files[0]){
+
+            // Recoger imagen a subir 
+            const formData = new FormData();
+            formData.append('file0', fileInput.files[0]);
+
+            // Peticion para enviar el fichero
+            const uploadRequest = await fetch(Global.url + "user/upload",{ 
+                method: "POST",
+                body: formData,
+                headers: {
+                    "Authorization": token 
+                }
+            });
+
+            const uploadData = await uploadRequest.json();
+            console.log(uploadData)
+            if(uploadData.status == "success" && uploadData.user){
+                
+                delete uploadData.user.password;
+
+                setAuth(uploadData.user);
+                setSaved("saved");
+            }else{
+                setSaved("error");
+            }
+        }
+
     }
 
 

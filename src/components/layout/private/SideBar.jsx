@@ -8,7 +8,6 @@ export const SideBar = () => {
 
   const { auth, counters } = useAuth();
 
-  console.log(auth, counters);
 
 
   return (
