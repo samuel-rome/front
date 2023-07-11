@@ -2,6 +2,7 @@ import React from 'react'
 import avatar from '../../assets/img/user.png'
 import { Global } from "../../helpers/Global";
 import useAuth from '../../hooks/useAuth';
+import { Link } from 'react-router-dom';
 
 
 
@@ -14,8 +15,8 @@ export const UserList = ({ users, getUsers, following, setFollowing, page, setPa
         let next = page + 1;
         setPage(next);
         getUsers(next);
-      }
-    
+    }
+
     const follow = async (userId) => {
         // Peticion al backen para guardar el follow
         const request = await fetch(Global.url + "follow/save", {
@@ -27,7 +28,7 @@ export const UserList = ({ users, getUsers, following, setFollowing, page, setPa
             }
         });
 
-        const data = await request.json(); 
+        const data = await request.json();
 
         // Cuanto este todo correcto
 
@@ -68,28 +69,29 @@ export const UserList = ({ users, getUsers, following, setFollowing, page, setPa
     return (
         <>
             <div className="content__posts">
-                {users.map((user, index) => {
+                {/* {users.map((user) => { */}
+                 {users.map((user, index) => {
                     return (
-                        <article className="posts__post" key={index}>
+                        <article className="posts__post" key={user}>
 
                             <div className="post__container">
 
                                 <div className="post__image-user">
-                                    <a href="#" className="post__image-link">
+                                    <Link to={"/social/perfil/" + user._id} className="post__image-link">
                                         {user.image != "default.png" && <img src={Global.url + "user/avatar/" + user.image} className="post__user-image" alt="Foto de perfil" />}
                                         {user.image == "default.png" && <img src={avatar} className="post__user-image" alt="Foto de perfil" />}
-                                    </a>
+                                    </Link>
                                 </div>
 
                                 <div className="post__body">
                                     <div className="post__user-info">
-                                        <a href="#" className="user-info__name">
+                                        <Link to={"/social/perfil/" + user._id} className="user-info__name">
                                             {user.name} {user.surname}
-                                        </a>
+                                        </Link>
                                         <span className="user-info__divider"> | </span>
-                                        <a href="#" className="user-info__create-date">
+                                        <Link to={"/social/perfil/" + user._id} className="user-info__create-date">
                                             {user.created_at}
-                                        </a>
+                                        </Link>
                                     </div>
 
                                     <h4 className="post__content">{user.bio}</h4>
