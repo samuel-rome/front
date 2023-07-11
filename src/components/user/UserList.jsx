@@ -5,19 +5,19 @@ import useAuth from '../../hooks/useAuth';
 
 
 
-export const UserList = ({ users, getUsers, more, loading, following, setFollowing, page, setPage }) => {
+export const UserList = ({ users, getUsers, following, setFollowing, page, setPage, more, loading }) => {
 
+    // console.log(users);
     const { auth } = useAuth();
 
     const nextPage = () => {
         let next = page + 1;
         setPage(next);
         getUsers(next);
-    }
-
+      }
+    
     const follow = async (userId) => {
         // Peticion al backen para guardar el follow
-
         const request = await fetch(Global.url + "follow/save", {
             method: "POST",
             body: JSON.stringify({ followed: userId }),
@@ -27,21 +27,19 @@ export const UserList = ({ users, getUsers, more, loading, following, setFollowi
             }
         });
 
-        const data = await request.json();
+        const data = await request.json(); 
 
         // Cuanto este todo correcto
 
         if (data.status == "success") {
 
             // Actualizar estado de following, agregando el nuevo follow
-            setFollowing([...following, userId])
+            setFollowing([...following, userId]);
         }
-
 
     }
 
     const unfollow = async (userId) => {
-
         // Peticion al backend para borrar el follow
         const request = await fetch(Global.url + 'follow/unfollow/' + userId, {
             method: "DELETE",
@@ -70,11 +68,9 @@ export const UserList = ({ users, getUsers, more, loading, following, setFollowi
     return (
         <>
             <div className="content__posts">
-
-
-                {users.map(user => {
+                {users.map((user, index) => {
                     return (
-                        <article className="posts__post" key={user._id}>
+                        <article className="posts__post" key={index}>
 
                             <div className="post__container">
 
@@ -104,28 +100,27 @@ export const UserList = ({ users, getUsers, more, loading, following, setFollowi
                             {user._id != auth._id &&
                                 <div className="post__buttons">
                                     {!following.includes(user._id) &&
-                                        <a className="post__button post__button--green"
+                                        <button className="post__button post__button--green"
                                             onClick={() => follow(user._id)}>
                                             Seguir
-                                        </a>
+                                        </button>
                                     }
 
 
                                     {following.includes(user._id) &&
-                                        <a className="post__button post__button--danger"
+                                        <button className="post__button post__button--danger"
                                             onClick={() => unfollow(user._id)}>
                                             Dejar de seguir
-                                        </a>
+                                        </button>
                                     }
 
                                 </div>
                             }
 
                         </article>
-                    )
-
-
+                    );
                 })}
+
             </div>
 
             {loading ? <div>Cargando...</div> : ""}
@@ -135,7 +130,6 @@ export const UserList = ({ users, getUsers, more, loading, following, setFollowi
                     <button className='content__btn-more-post' onClick={nextPage}>
                         Ver mas personas
                     </button>
-
                 </div>
             }
         </>

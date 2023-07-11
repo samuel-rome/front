@@ -27,7 +27,7 @@ export const People = () => {
         "Content-Type": "application/json",
         "Authorization": localStorage.getItem("token")
       }
-    })
+    });
 
     const data = await request.json();
 
@@ -61,15 +61,14 @@ export const People = () => {
       </header>
 
       <UserList users={users}
-        getUsers={getUsers}
-        following={following}
-        setFollowing={setFollowing}
-        page={page}
-        setPage={setPage}
-        more={more}
-        loading={loading}
+                getUsers={getUsers}
+                following={following}
+                setFollowing={setFollowing}
+                page={page}
+                setPage={setPage}
+                more={more}
+                loading={loading}
       />
-
 
       <br />
     </>
