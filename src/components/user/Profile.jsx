@@ -28,6 +28,7 @@ export const Profile = () => {
   useEffect(() => {
     getDataUser();
     getCounters();
+    setMore(true);
     getPublications(1, true);
 
   }, [params]);
@@ -121,11 +122,16 @@ export const Profile = () => {
 
       if(newProfile){
         newPublications = data.publications;
+        setMore(true);
+        setPage(1);
       }
 
       setPublications(newPublications);
 
-      if (publications.length >= (data.total - data.publications.length)) {
+      if (!newProfile && publications.length >= (data.total - data.publications.length)) {
+        setMore(false);
+      }
+      if (data.pages <= 1){
         setMore(false);
       }
     }
@@ -135,6 +141,22 @@ export const Profile = () => {
     let next = page + 1;
     setPage(next);
     getPublications(next);
+  }
+
+  const deletePublication = async(publicationId) => {
+    const request = await fetch(Global.url + "publication/remove/" + publicationId, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": localStorage.getItem("token")
+      }
+    });
+
+    const data = await request.json();
+    setPage(1);
+    setMore(true);
+    getPublications(1, true);
+    
   }
 
 
@@ -201,7 +223,7 @@ export const Profile = () => {
 
       <div className="content__posts">
 
-        {/* {publications.map(publication => {
+        {publications.map(publication => {
 
           return (
 
@@ -229,6 +251,10 @@ export const Profile = () => {
                   </div>
 
                   <h4 className="post__content">{publication.text}</h4>
+
+                  {/* PARA SUBIR IMAGENES A LA PUBLICACION FALTA  */}
+                 {/* {publication.file && <img src={Global.url + "publication/media/" + publication.file} />} */}
+
                 </div>
               </div>
 
@@ -242,9 +268,9 @@ export const Profile = () => {
               }
             </article>);
 
-        })}; */}
+        })};
 
-        {publications.map((publication, index) => (
+        {/* {publications.map((publication, index) => (
           <article className="posts__post" key={`${publication._id}-${index}`}>
 
             <div className="post__container">
@@ -267,19 +293,21 @@ export const Profile = () => {
                 </div>
 
                 <h4 className="post__content">{publication.text}</h4>
+
+                {publication.file && <img src={Global.url + "publication/media/" + publication.file} />}
               </div>
             </div>
 
             {auth._id === publication.user._id &&
               <div className="post__buttons">
-                <a href="#" className="post__button">
+                <button onClick={() => deletePublication(publication._id)} className="post__button">
                   <i className="fa-solid fa-trash-can"></i>
-                </a>
+                </button>
               </div>
             }
 
           </article>
-        ))}
+        ))} */}
 
 
 
